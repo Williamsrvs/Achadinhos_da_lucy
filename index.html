@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🛍️ Achadinhos da Lucy | Multiplataformas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #e85d1a;
+      --yellow: #f5c518;
+      --blue: #2563eb;
+      --blue-light: #3b82f6;
+      --dark: #1a1a2e;
+      --white: #fff;
+      --card-bg: #fff;
+      --shadow: 0 8px 32px rgba(0,0,0,0.13);
+      --radius: 18px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f0f4ff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 40%, #f97316 100%);
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .header-waves {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    }
+    .header-waves svg { width: 100%; height: 100%; position: absolute; bottom: 0; }
+
+    .header-inner {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 32px 20px 28px;
+      gap: 16px;
+    }
+
+    .logo-wrapper {
+      background: white;
+      border-radius: 50%;
+      width: 130px; height: 130px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+      overflow: hidden;
+      border: 4px solid var(--yellow);
+      animation: popIn 0.7s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .logo-wrapper img { width: 90%; height: 90%; object-fit: contain; }
+
+    .header-title {
+      color: white;
+      text-align: center;
+      animation: fadeUp 0.6s 0.2s both;
+    }
+    .header-title h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      line-height: 1;
+      text-shadow: 3px 4px 0px rgba(0,0,0,0.25);
+      color: var(--yellow);
+    }
+    .header-title .subtitle {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 4px 16px;
+      margin-top: 8px;
+      display: inline-block;
+      color: white;
+    }
+
+    /* platform badges */
+    .platform-badges {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.6s 0.35s both;
+    }
+    .badge {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 50px;
+      padding: 7px 16px;
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: background 0.2s, transform 0.2s;
+      cursor: pointer;
+    }
+    .badge:hover { background: rgba(255,255,255,0.28); transform: translateY(-2px); }
+    .badge-icon { font-size: 1.1rem; }
+    .badge-shopee { background: rgba(232,93,26,0.4); border-color: var(--orange); }
+    .badge-amazon { background: rgba(0,0,0,0.35); border-color: #ff9900; }
+    .badge-ml { background: rgba(245,197,24,0.3); border-color: var(--yellow); }
+
+    /* ===== SEARCH & FILTER ===== */
+    .search-section {
+      background: white;
+      padding: 20px 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      position: sticky; top: 0; z-index: 100;
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+      justify-content: center;
+    }
+    .search-box {
+      display: flex; align-items: center;
+      background: #f1f5f9;
+      border-radius: 50px;
+      padding: 10px 18px;
+      flex: 1; max-width: 420px;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .search-box:focus-within { border-color: var(--blue-light); }
+    .search-box input {
+      border: none; background: transparent; outline: none;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      width: 100%; color: var(--dark);
+    }
+    .search-box input::placeholder { color: #94a3b8; font-weight: 600; }
+    .search-icon { color: #94a3b8; margin-right: 8px; font-size: 1.1rem; }
+
+    .filter-tabs {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .filter-tab {
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: 2px solid #e2e8f0;
+      background: white;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #64748b;
+    }
+    .filter-tab.active, .filter-tab:hover {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
+    .filter-tab.shopee.active { background: var(--orange); border-color: var(--orange); box-shadow: 0 4px 12px rgba(232,93,26,0.3); }
+    .filter-tab.amazon.active { background: #232f3e; border-color: #232f3e; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .filter-tab.mercadolivre.active { background: #ffe600; border-color: #ffe600; color: #333; box-shadow: 0 4px 12px rgba(245,197,24,0.4); }
+
+    /* ===== HERO DEALS BANNER ===== */
+    .hero-deals {
+      max-width: 1200px;
+      margin: 28px auto 0;
+      padding: 0 20px;
+    }
+    .deals-banner {
+      background: linear-gradient(135deg, #e85d1a, #f97316, #fb923c);
+      border-radius: var(--radius);
+      padding: 24px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+      box-shadow: 0 12px 40px rgba(232,93,26,0.3);
+      animation: fadeUp 0.5s 0.5s both;
+      position: relative; overflow: hidden;
+    }
+    .deals-banner::before {
+      content: '';
+      position: absolute; right: -40px; top: -40px;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
+    .deals-banner::after {
+      content: '';
+      position: absolute; right: 60px; bottom: -60px;
+      width: 160px; height: 160px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+    .deals-text h2 {
+      font-family: 'Pacifico', cursive;
+      color: white;
+      font-size: clamp(1.3rem, 4vw, 2rem);
+      text-shadow: 2px 3px 0px rgba(0,0,0,0.2);
+    }
+    .deals-text p { color: rgba(255,255,255,0.9); font-weight: 600; margin-top: 4px; }
+    .deals-cta {
+      background: #25d366;
+      color: var(--white);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 12px 28px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative; z-index: 1;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .deals-cta:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+
+    /* ===== SECTION TITLE ===== */
+    .section-title {
+      max-width: 1200px; margin: 36px auto 20px;
+      padding: 0 20px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .section-title h2 {
+      font-family: 'Nunito', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: var(--dark);
+    }
+    .title-line {
+      flex: 1; height: 3px;
+      background: linear-gradient(90deg, var(--blue), transparent);
+      border-radius: 2px;
+    }
+    .section-badge {
+      background: var(--blue);
+      color: white;
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 3px 12px;
+      border-radius: 20px;
+    }
+
+    /* ===== PRODUCT GRID ===== */
+    .products-grid {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 20px 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 22px;
+    }
+
+    /* ===== PRODUCT CARD ===== */
+    .product-card {
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+      animation: fadeUp 0.4s both;
+      position: relative;
+      display: flex; flex-direction: column;
+    }
+    .product-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    }
+
+    .card-platform-tag {
+      position: absolute; top: 12px; left: 12px; z-index: 5;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-weight: 800;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .tag-shopee { background: var(--orange); color: white; }
+    .tag-amazon { background: #232f3e; color: #ff9900; }
+    .tag-ml { background: #ffe600; color: #333; }
+
+    .card-img-wrap {
+      width: 100%; height: 200px;
+      background: #f8fafc;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s;
+    }
+    .product-card:hover .card-img-wrap img { transform: scale(1.07); }
+
+    .card-discount-badge {
+      position: absolute; top: 12px; right: 12px;
+      background: #ef4444;
+      color: white;
+      font-weight: 900;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: 50px;
+      box-shadow: 0 2px 8px rgba(239,68,68,0.4);
+    }
+
+    .card-body {
+      padding: 16px;
+      flex: 1; display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .card-category {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+    }
+
+    .card-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--dark);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-rating {
+      display: flex; align-items: center; gap: 4px;
+      color: var(--yellow);
+      font-size: 0.85rem;
+    }
+    .card-rating span { color: #64748b; font-size: 0.8rem; }
+
+    .card-pricing {
+      margin-top: auto;
+    }
+    .price-old {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-decoration: line-through;
+      font-weight: 600;
+    }
+    .price-new {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--orange);
+      line-height: 1;
+    }
+    .price-installment {
+      font-size: 0.78rem;
+      color: #64748b;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .card-footer {
+      padding: 12px 16px;
+      border-top: 1px solid #f1f5f9;
+      display: flex; gap: 8px;
+    }
+    .btn-buy {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      text-align: center;
+      display: block;
+    }
+    .btn-shopee { background: linear-gradient(135deg, #e85d1a, #f97316); color: white; }
+    .btn-amazon { background: linear-gradient(135deg, #232f3e, #374151); color: #ff9900; }
+    .btn-ml { background: linear-gradient(135deg, #ffe600, #fbbf24); color: #333; }
+    .btn-buy:hover { transform: scale(1.04); box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+
+    .btn-whatsapp {
+      width: 40px; height: 40px;
+      background: #25d366;
+      border: none; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      color: white; font-size: 1.2rem;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .btn-whatsapp:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(37,211,102,0.4); }
+
+    /* ===== LOADING SPINNER ===== */
+    .loading-state {
+      grid-column: 1/-1;
+      text-align: center; padding: 60px 20px;
+    }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 5px solid #e2e8f0;
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    .loading-state p { color: #64748b; font-weight: 700; font-size: 1rem; }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center; padding: 60px 20px;
+    }
+    .empty-state .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+    .empty-state h3 { font-weight: 900; color: var(--dark); margin-bottom: 8px; }
+    .empty-state p { color: #64748b; font-weight: 600; }
+
+    /* ===== SKELETON CARDS ===== */
+    .skeleton-card {
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .skeleton-img {
+      width: 100%; height: 200px;
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    .skeleton-body { padding: 16px; }
+    .skeleton-line {
+      height: 12px; border-radius: 6px; margin-bottom: 10px;
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    .skeleton-line.short { width: 60%; }
+    .skeleton-line.medium { width: 80%; }
+    .skeleton-price { height: 24px; width: 50%; border-radius: 8px; margin-top: 16px; background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; }
+
+    /* ===== FLOATING WHATSAPP ===== */
+    .float-whatsapp {
+      position: fixed; bottom: 28px; right: 28px; z-index: 999;
+      width: 60px; height: 60px;
+      background: #25d366;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.5);
+      text-decoration: none;
+      animation: pulse-green 2s infinite;
+      transition: transform 0.2s;
+    }
+    .float-whatsapp:hover { transform: scale(1.12); }
+    .float-whatsapp svg { width: 32px; height: 32px; fill: white; }
+    .float-tooltip {
+      position: absolute; right: 68px; top: 50%;
+      transform: translateY(-50%);
+      background: #333;
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 6px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .float-whatsapp:hover .float-tooltip { opacity: 1; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 36px 20px;
+    }
+    footer .footer-logo {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.8rem;
+      color: var(--yellow);
+      margin-bottom: 8px;
+    }
+    footer p { color: rgba(255,255,255,0.6); font-size: 0.9rem; font-weight: 600; }
+    footer a { color: var(--yellow); text-decoration: none; }
+    .footer-links {
+      display: flex; gap: 20px; justify-content: center;
+      margin: 16px 0;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: rgba(255,255,255,0.7);
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--yellow); }
+
+    /* ===== STATS BAR ===== */
+    .stats-bar {
+      background: var(--dark);
+      padding: 16px 20px;
+      display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+    }
+    .stat-item {
+      color: white; text-align: center;
+    }
+    .stat-number {
+      font-family: 'Pacifico', cursive;
+      font-size: 1.5rem;
+      color: var(--yellow);
+    }
+    .stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.6); font-weight: 700; }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes popIn {
+      from { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+      to { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes fadeUp {
+      from { transform: translateY(24px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    @keyframes pulse-green {
+      0%, 100% { box-shadow: 0 6px 24px rgba(37,211,102,0.5); }
+      50% { box-shadow: 0 6px 40px rgba(37,211,102,0.8), 0 0 0 12px rgba(37,211,102,0.1); }
+    }
+
+    /* ===== ADMIN BAR ===== */
+    .admin-bar {
+      background: var(--dark);
+      padding: 10px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .admin-bar-left {
+      display: flex; align-items: center; gap: 10px;
+      color: rgba(255,255,255,0.6); font-size: 0.82rem; font-weight: 700;
+    }
+    .admin-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; animation: pulse-dot 1.5s infinite; }
+    .btn-admin {
+      display: flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--orange), #f97316);
+      color: white;
+      border: none; border-radius: 50px;
+      padding: 8px 20px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 800; font-size: 0.85rem;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 14px rgba(232,93,26,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-admin:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 8px 20px rgba(232,93,26,0.45); }
+
+    /* ===== NEW PRODUCT BADGE ===== */
+    .card-new-badge {
+      position: absolute; bottom: 12px; right: 12px;
+      background: #22c55e; color: white;
+      font-size: 0.65rem; font-weight: 900;
+      padding: 3px 8px; border-radius: 20px;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      animation: pulseGreen 1.5s infinite;
+      z-index: 5;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    @keyframes pulseGreen {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+    }
+
+    @media (max-width: 600px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .search-section { padding: 14px 16px; }
+      .deals-banner { padding: 18px 20px; }
+    }
+    @media (max-width: 380px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="header-waves">
+    <svg viewBox="0 0 1440 180" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,80 C240,160 480,0 720,80 C960,160 1200,0 1440,80 L1440,180 L0,180 Z" fill="rgba(255,255,255,0.06)"/>
+      <path d="M0,120 C360,40 720,200 1080,100 C1260,60 1380,120 1440,140 L1440,180 L0,180 Z" fill="rgba(255,255,255,0.04)"/>
+    </svg>
+  </div>
+
+  <div class="header-inner">
+    <div class="logo-wrapper">
+      <img src="https://raw.githubusercontent.com/Williamsrvs/img_achadinhos/refs/heads/main/logo.jpg" alt="Achadinhos da Lucy Logo" />
+      
+    </div>
+    <div class="header-title">
+      <h1>Achadinhos da Lucy</h1>
+      <div class="subtitle">Multiplataformas</div>
+    </div>
+    <div class="platform-badges">
+      <span class="badge badge-shopee"><span class="badge-icon">🛍️</span> Shopee</span>
+      <span class="badge badge-ml"><span class="badge-icon">🤝</span> Mercado Livre</span>
+      <span class="badge badge-amazon"><span class="badge-icon">📦</span> Amazon</span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== ADMIN BAR ===== -->
+<div class="admin-bar">
+  <div class="admin-bar-left">
+    <div class="admin-dot"></div>
+    <span>Loja online · Achadinhos da Lucy</span>
+  </div>
+  <a href="login.html" class="btn-admin">
+    🔐 Painel Administrativo
+  </a>
+</div>
+
+<!-- ===== STATS BAR ===== -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-number" id="totalProducts">0</div>
+    <div class="stat-label">Produtos</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">3</div>
+    <div class="stat-label">Plataformas</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">⭐ 4.9</div>
+    <div class="stat-label">Avaliação</div>
+  </div>
+</div>
+
+<!-- ===== SEARCH & FILTER ===== -->
+<div class="search-section">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Buscar produtos..." />
+  </div>
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-filter="all">Todos</button>
+    <button class="filter-tab shopee" data-filter="shopee">🛍️ Shopee</button>
+    <button class="filter-tab mercadolivre" data-filter="mercadolivre">🤝 Mercado Livre</button>
+    <button class="filter-tab amazon" data-filter="amazon">📦 Amazon</button>
+  </div>
+</div>
+
+<!-- ===== HERO DEALS BANNER ===== -->
+<div class="hero-deals">
+  <div class="deals-banner">
+    <div class="deals-text">
+      <h2>🔥 Ofertas Imperdíveis!</h2>
+      <p>Os melhores achadinhos selecionados com carinho pela Lucy</p>
+    </div>
+    <a href="https://wa.me/5582982149854" target="_blank" class="deals-cta">
+      💬 Falar com a Lucy
+    </a>
+  </div>
+</div>
+
+<!-- ===== PRODUCTS SECTION ===== -->
+<div class="section-title">
+  <h2>🛒 Produtos em Destaque</h2>
+  <div class="title-line"></div>
+  <span class="section-badge" id="countBadge">0 produtos</span>
+</div>
+
+<div class="products-grid" id="productsGrid">
+  <!-- Skeleton loading cards -->
+  <div class="skeleton-card" id="sk1">
+    <div class="skeleton-img"></div>
+    <div class="skeleton-body">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-price"></div>
+    </div>
+  </div>
+  <div class="skeleton-card" id="sk2">
+    <div class="skeleton-img"></div>
+    <div class="skeleton-body">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-price"></div>
+    </div>
+  </div>
+  <div class="skeleton-card" id="sk3">
+    <div class="skeleton-img"></div>
+    <div class="skeleton-body">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-price"></div>
+    </div>
+  </div>
+  <div class="skeleton-card" id="sk4">
+    <div class="skeleton-img"></div>
+    <div class="skeleton-body">
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line medium"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-price"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FLOATING WHATSAPP ===== -->
+<a class="float-whatsapp" href="https://wa.me/5582982149854" target="_blank" title="Falar com a Lucy no WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+  </svg>
+  <span class="float-tooltip">Falar com a Lucy</span>
+</a>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-logo">Achadinhos da Lucy</div>
+  <div class="footer-links">
+    <a href="https://wa.me/5582982149854" target="_blank">📱 WhatsApp</a>
+    <a href="#" id="footerShopee">🛍️ Shopee</a>
+    <a href="#" id="footerML">🤝 Mercado Livre</a>
+    <a href="#" id="footerAmazon">📦 Amazon</a>
+  </div>
+  <p>📞 (82) 98214-9854 | © 2026 Achadinhos da Lucy. Todos os direitos reservados.</p>
+  <p style="margin-top:8px; font-size:0.8rem;">As melhores ofertas das melhores plataformas 🛒✨</p>
+</footer>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+  // ============================================================
+  // CONFIGURAÇÃO DA API
+  // ============================================================
+  const API_CONFIG = {
+    // 🔧 ALTERE AQUI para a URL da sua API
+    baseUrl: 'https://sua-api.com/api/products',
+    // Parâmetros opcionais (remova se não precisar)
+    params: {
+      limit: 50,
+      active: true
+    },
+    // Headers de autenticação (adicione seu token se necessário)
+    headers: {
+      'Content-Type': 'application/json',
+      // 'Authorization': 'Bearer SEU_TOKEN_AQUI'
+    }
+  };
+
+  // ============================================================
+  // DADOS DEMO (usados quando a API não está disponível)
+  // ============================================================
+  const DEMO_PRODUCTS = [
+    {
+      id: 1,
+      title: "Fone de Ouvido Sem Fio Esportivo Gancho Bluetooth Cancelamento de Ruído TWS Estéreo com LED 15h",
+      category: "Eletrônicos",
+      image: "https://down-br.img.susercontent.com/file/br-11134207-81ztc-mjirdzcvy9kz9c.webp",
+      platform: "shopee",
+      price: 69.90,
+      originalPrice: 124.99,
+      discount: 44,
+      rating: 5.0,
+      reviews: 78,
+      installments: "12x R$ 6,78",
+      url: "https://s.shopee.com.br/30ic7OOzjS"
+    },
+    {
+      id: 2,
+      title: "Eletrolux - Kit Potes de Plástico Hermético com 10 Un ",
+      category: "Casa e Cozinha",
+      image: "https://m.media-amazon.com/images/I/51x8MCzIAnL._AC_SL1000_.jpg",
+      platform: "amazon",
+      price: 67.20,
+      originalPrice: 87.90,
+      discount: 21,
+      rating: 4.9,
+      reviews: 2000,
+      installments: "12x R$ 6,21",
+      url: "https://amzn.to/3ONP1vu"
+    },
+    {
+      id: 3,
+      title: "Huggies - Fralda Descartável Supreme Care - M - 196 Unidades",
+      category: "Baby",
+      image: "https://m.media-amazon.com/images/I/81k5q1RPzlL._AC_SL1500_.jpg",
+      platform: "amazon",
+      price: 184.90,
+      originalPrice: 229.90,
+      discount: 19,
+      rating: 4.7,
+      reviews: 26.547,
+      installments: "6x R$ 30,85",
+      url: "https://amzn.to/4c03fTU"
+    },
+    {
+      id: 4,
+      title: "Bicicleta Ergométrica Bike Spinning Bike Treino em Casa Academia",
+      category: "Esportes",
+      image: "https://m.media-amazon.com/images/I/6174CUqjRHL._AC_SL1024_.jpg",
+      platform: "amazon",
+      price: 539.99,
+      originalPrice: 0.00,
+      discount: 39,
+      rating: 3.6,
+      reviews: 27,
+      installments: "11x R$ 54,59",
+      url: "https://amzn.to/4alCS9E"
+    },
+    {
+      id: 5,
+      title:  "Mondial Air Fryer Digital 5L, Inox Fritadeira Sem Óleo 1900W 220v - Cores Vermmelha e Preta",
+      category: "Casa e Cozinha",
+      image: "https://m.media-amazon.com/images/I/81DHdkzgECL._AC_SL1500_.jpg",
+      platform: "amazon",
+      price: 309.90,
+      originalPrice: 769.90,
+      discount: 59,
+      rating: 4.7,
+      reviews: 19.947,
+      installments: "6x R$ 51,65",
+      url: "https://amzn.to/4c1bnDG"
+    },
+    {
+      id: 6,
+      title: "Lavadora Lava Jato Portátil Pressão 2 Baterias + Maleta preto 127/220v",
+      category: "Automóveis",
+      image: "https://http2.mlstatic.com/D_NQ_NP_2X_710675-MLB89102120983_082025-F.webp",
+      platform: "mercadolivre",
+      price: 108.59,
+      originalPrice: 229.90,
+      discount: 52,
+      rating: 4.6,
+      reviews: 50.000,
+      installments: "12x R$ 10,73",
+      url: "https://mercadolivre.com/sec/2DPakbS"
+    },
+    {
+      id: 7,
+      title: "Carregador Inteligente de Bateria Automotiva 12v 6a Recuperador de baterias",
+      category: "Calçados",
+      image: "https://http2.mlstatic.com/D_NQ_NP_2X_689448-MLA106583434455_022026-F.webp",
+      platform: "mercadolivre",
+      price: 56.90,
+      originalPrice: 78.90,
+      discount: 27,
+      rating: 4.8,
+      reviews: 10.000,
+      installments: "12x R$ 5,60",
+      url: "https://mercadolivre.com/sec/2Yf1AYG"
+    },
+    {
+      id: 8,
+      title: "Tênis Masculino Olymp Olimp Space Caminhada Barato Promoção",
+      category: "Esportes",
+      image: "https://http2.mlstatic.com/D_NQ_NP_2X_676156-MLB74284527185_012024-F-tnis-masculino-olymp-olimp-space-caminhada-barato-promoco.webp",
+      platform: "mercadolivre",
+      price: 64.49, 
+      originalPrice: 78.90,
+      discount: 18,
+      rating: 4.4,
+      reviews: 43.647,
+      installments: "12x R$ 635",
+      url: "https://mercadolivre.com/sec/33zz1uR"
+    }
+
+    
+  ];
+
+  // ============================================================
+  // ESTADO DA APLICAÇÃO
+  // ============================================================
+  let allProducts = [];
+  let filteredProducts = [];
+  let currentFilter = 'all';
+  let searchQuery = '';
+
+  // ============================================================
+  // PLATAFORM CONFIGS
+  // ============================================================
+  const platformConfig = {
+    shopee: { label: 'Shopee', emoji: '🛍️', btnClass: 'btn-shopee', tagClass: 'tag-shopee' },
+    amazon: { label: 'Amazon', emoji: '📦', btnClass: 'btn-amazon', tagClass: 'tag-amazon' },
+    mercadolivre: { label: 'Mercado Livre', emoji: '🤝', btnClass: 'btn-ml', tagClass: 'tag-ml' }
+  };
+
+  // ============================================================
+  // FETCH DA API
+  // ============================================================
+  // STORAGE KEY (same as registration form)
+  // ============================================================
+  const STORAGE_KEY = 'achadinhos_lucy_products';
+
+  function loadLocalProducts() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch { return []; }
+  }
+
+  // ============================================================
+  // FETCH DA API
+  // ============================================================
+  async function fetchProducts() {
+    let apiProducts = [];
+    try {
+      const params = new URLSearchParams(API_CONFIG.params).toString();
+      const url = params ? `${API_CONFIG.baseUrl}?${params}` : API_CONFIG.baseUrl;
+      const response = await fetch(url, { headers: API_CONFIG.headers });
+      if (!response.ok) throw new Error('API error');
+      const data = await response.json();
+      apiProducts = data.products || data.items || data.data || data;
+    } catch (err) {
+      console.warn('⚠️ API indisponível — usando dados demo.', err.message);
+      apiProducts = DEMO_PRODUCTS;
+    }
+
+    // Load products registered via form (localStorage)
+    const localProducts = loadLocalProducts().map(p => ({ ...p, _isNew: true }));
+
+    // Merge: local products first (most recent), then API/demo
+    // Avoid duplicates by ID
+    const apiIds = new Set(localProducts.map(p => String(p.id)));
+    const merged = [...localProducts, ...apiProducts.filter(p => !apiIds.has(String(p.id)))];
+
+    return merged;
+  }
+
+  // ============================================================
+  // RENDERIZAR PRODUTO
+  // ============================================================
+  function renderProduct(product, index) {
+    const platform = product.platform || 'shopee';
+    const cfg = platformConfig[platform] || platformConfig.shopee;
+    const whatsappMsg = encodeURIComponent(`Olá Lucy! Vi esse produto "${product.title}" e quero saber mais! 😊`);
+    const discount = product.discount || (product.originalPrice
+      ? Math.round((1 - product.price / product.originalPrice) * 100)
+      : 0);
+    const stars = '⭐'.repeat(Math.round(product.rating || 5));
+    const isNew = product._isNew;
+
+    return `
+      <div class="product-card" style="animation-delay:${index * 0.07}s" data-platform="${platform}" data-title="${product.title.toLowerCase()}">
+        <div class="card-platform-tag ${cfg.tagClass}">
+          ${cfg.emoji} ${cfg.label}
+        </div>
+        <div class="card-img-wrap">
+          <img src="${product.image}" alt="${product.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Produto'" />
+          ${discount ? `<span class="card-discount-badge">-${discount}%</span>` : ''}
+          ${isNew ? `<span class="card-new-badge">✨ Novo</span>` : ''}
+        </div>
+        <div class="card-body">
+          <span class="card-category">${product.category || 'Oferta'}</span>
+          <h3 class="card-title">${product.title}</h3>
+          <div class="card-rating">
+            ${stars}
+            <span>(${(product.reviews || 0).toLocaleString('pt-BR')})</span>
+          </div>
+          <div class="card-pricing">
+            ${product.originalPrice ? `<div class="price-old">De R$ ${product.originalPrice.toFixed(2).replace('.', ',')}</div>` : ''}
+            <div class="price-new">R$ ${product.price.toFixed(2).replace('.', ',')}</div>
+            ${product.installments ? `<div class="price-installment">ou ${product.installments} sem juros</div>` : ''}
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="${product.url || '#'}" target="_blank" class="btn-buy ${cfg.btnClass}">
+            ${cfg.emoji} Ver Oferta
+          </a>
+          <a href="https://wa.me/5582982149854?text=${whatsappMsg}" target="_blank" class="btn-whatsapp" title="Consultar no WhatsApp">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
+  // ============================================================
+  // RENDERIZAR GRID
+  // ============================================================
+  function renderGrid(products) {
+    const grid = document.getElementById('productsGrid');
+
+    if (!products.length) {
+      grid.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>Nenhum produto encontrado</h3>
+          <p>Tente buscar por outro termo ou plataforma</p>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = products.map((p, i) => renderProduct(p, i)).join('');
+  }
+
+  // ============================================================
+  // FILTROS E BUSCA
+  // ============================================================
+  function applyFilters() {
+    filteredProducts = allProducts.filter(p => {
+      const matchFilter = currentFilter === 'all' || p.platform === currentFilter;
+      const matchSearch = !searchQuery || p.title.toLowerCase().includes(searchQuery);
+      return matchFilter && matchSearch;
+    });
+
+    renderGrid(filteredProducts);
+    updateCount(filteredProducts.length);
+  }
+
+  function updateCount(n) {
+    document.getElementById('countBadge').textContent = `${n} produto${n !== 1 ? 's' : ''}`;
+  }
+
+  // ============================================================
+  // INICIALIZAÇÃO
+  // ============================================================
+  async function init() {
+    const products = await fetchProducts();
+    allProducts = products;
+    filteredProducts = products;
+
+    // Atualiza estatísticas
+    animateNumber('totalProducts', products.length);
+    updateCount(products.length);
+
+    // Renderiza produtos
+    renderGrid(products);
+  }
+
+  function animateNumber(id, target) {
+    let current = 0;
+    const el = document.getElementById(id);
+    const step = Math.ceil(target / 30);
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = current;
+      if (current >= target) clearInterval(timer);
+    }, 50);
+  }
+
+  // ============================================================
+  // EVENT LISTENERS
+  // ============================================================
+  // Filter tabs
+  document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentFilter = tab.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  // Search input
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    applyFilters();
+  });
+
+  // Platform badges in header
+  document.querySelectorAll('.badge').forEach(badge => {
+    badge.addEventListener('click', () => {
+      const map = { 'Shopee': 'shopee', 'Amazon': 'amazon', 'Mercado Livre': 'mercadolivre' };
+      const label = badge.querySelector('.badge-icon').nextSibling.textContent.trim();
+      const filter = map[label];
+      if (filter) {
+        const tab = document.querySelector(`.filter-tab.${filter}`);
+        if (tab) tab.click();
+        document.querySelector('.search-section').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+  init();
+
+
+</script>
+</body>
+</html>
