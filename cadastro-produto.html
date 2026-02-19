@@ -604,13 +604,7 @@
         <!-- DIVIDER: Informações Básicas -->
         <div class="form-divider full"><span>📦 Informações do Produto</span></div>
 
-        <!-- ID -->
-        <div class="form-group">
-          <label><span class="lbl-icon">🔢</span> ID do Produto <span class="required">*</span></label>
-          <input type="text" id="f-id" placeholder="ex: prod_001" />
-          <span class="field-error" id="err-id">ID é obrigatório</span>
-        </div>
-
+        <!-- ID gerado automaticamente pelo banco de dados -->
         <!-- PLATFORM -->
         <div class="form-group">
           <label><span class="lbl-icon">🏪</span> Plataforma <span class="required">*</span></label>
@@ -801,9 +795,9 @@ function doLogout() {
 }
 
 // ============================================================
-// STORAGE KEY
+// API CONFIG — aponta para api.php na mesma pasta
 // ============================================================
-const STORAGE_KEY = 'achadinhos_lucy_products';
+const API_URL = 'api.php';
 
 // ============================================================
 // PLATFORM CONFIG
@@ -815,17 +809,23 @@ const PLATFORMS = {
 };
 
 // ============================================================
-// LOAD PRODUCTS FROM STORAGE
+// LOAD PRODUCTS FROM MYSQL VIA API
 // ============================================================
-function loadProducts() {
+async function loadProducts() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch { return []; }
+    const res = await fetch(`${API_URL}?action=list`);
+    const data = await res.json();
+    if (data.success) return data.products;
+    console.error('Erro ao carregar produtos:', data.error);
+    return [];
+  } catch (err) {
+    console.error('Falha na requisição:', err);
+    return [];
+  }
 }
 
-function saveProducts(products) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-}
+// saveProducts não é mais necessário — o POST cuida disso
+function saveProducts() { /* substituído pela API */ }
 
 // ============================================================
 // LIVE PREVIEW
@@ -855,7 +855,7 @@ function updatePreview() {
   const existImg = imgWrap.querySelector('img');
   if (image) {
     if (!existImg) {
-      imgWrap.innerHTML = `<img src="${image}" alt="preview" onerror="this.parentElement.innerHTML='<div class=\\"no-img\\"><span>⚠️</span>Imagem inválida</div>'" />`;
+      imgWrap.innerHTML = `<img src="${image}" alt="preview" onerror="this.parentElement.innerHTML='<div class=\\"no-img\\"><span></span>`;
     } else {
       existImg.src = image;
     }
@@ -918,7 +918,7 @@ document.getElementById('f-platform').addEventListener('change', function() {
 // ============================================================
 // LIVE INPUT LISTENERS
 // ============================================================
-['f-title','f-category','f-image','f-price','f-originalPrice','f-discount','f-rating','f-reviews','f-installments','f-url','f-id']
+['f-title','f-category','f-image','f-price','f-originalPrice','f-discount','f-rating','f-reviews','f-installments','f-url']
   .forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', updatePreview);
@@ -933,7 +933,6 @@ document.getElementById('f-originalPrice').addEventListener('input', () => { cal
 function validate() {
   let valid = true;
   const required = [
-    { id: 'f-id',       errId: 'err-id',       msg: 'ID é obrigatório' },
     { id: 'f-title',    errId: 'err-title',    msg: 'Nome é obrigatório' },
     { id: 'f-price',    errId: 'err-price',    msg: 'Informe o preço' },
     { id: 'f-url',      errId: 'err-url',      msg: 'Informe o link' },
@@ -967,30 +966,21 @@ function validate() {
 }
 
 // ============================================================
-// SUBMIT
+// SUBMIT → POST para MySQL via api.php
 // ============================================================
-document.getElementById('btnSubmit').addEventListener('click', () => {
+document.getElementById('btnSubmit').addEventListener('click', async () => {
   if (!validate()) {
     showToast('error', '⚠️ Campos Obrigatórios', 'Preencha todos os campos marcados com *');
     return;
   }
 
-  const products = loadProducts();
-
-  // Check duplicate ID
-  const newId = document.getElementById('f-id').value.trim();
-  if (products.find(p => String(p.id) === newId)) {
-    document.getElementById('f-id').classList.add('error');
-    document.getElementById('err-id').textContent = 'Já existe um produto com este ID';
-    document.getElementById('err-id').classList.add('show');
-    showToast('error', '❌ ID Duplicado', 'Já existe um produto com este ID');
-    return;
-  }
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.innerHTML = '<span>⏳ Salvando...</span>';
 
   const discount = calcDiscount();
 
   const product = {
-    id:            newId,
     title:         document.getElementById('f-title').value.trim(),
     category:      document.getElementById('f-category').value.trim() || 'Oferta',
     image:         document.getElementById('f-image').value.trim(),
@@ -1001,20 +991,44 @@ document.getElementById('btnSubmit').addEventListener('click', () => {
     rating:        parseFloat(document.getElementById('f-rating').value) || null,
     reviews:       parseInt(document.getElementById('f-reviews').value) || 0,
     installments:  document.getElementById('f-installments').value.trim() || null,
-    url:           document.getElementById('f-url').value.trim(),
-    createdAt:     new Date().toISOString()
+    url:           document.getElementById('f-url').value.trim()
   };
 
-  products.push(product);
-  saveProducts(products);
+  try {
+    const res = await fetch(`${API_URL}?action=save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(product)
+    });
 
-  // Show success
-  document.getElementById('successMsg').textContent = `"${product.title.substring(0, 40)}..." foi adicionado à loja com sucesso!`;
-  document.getElementById('successOverlay').classList.add('show');
+    const data = await res.json();
 
-  // Refresh list
-  renderProductList();
-  updateCountBadge();
+    if (!data.success) {
+      showToast('error', '❌ Erro ao Salvar', data.error || 'Não foi possível salvar o produto');
+      btn.disabled = false;
+      btn.innerHTML = '<span>✅ Cadastrar Produto</span>';
+      return;
+    }
+
+    // Show success
+    document.getElementById('successMsg').textContent = `"${product.title.substring(0, 40)}..." foi adicionado à loja com sucesso!`;
+    document.getElementById('successOverlay').classList.add('show');
+
+    // Refresh list
+    renderProductList();
+    updateCountBadge();
+
+  } catch (err) {
+    // Erro de rede: api.php não encontrado ou servidor PHP não rodando
+    const msg = err.message.includes('Failed to fetch')
+      ? 'api.php não encontrado. Confira se está na mesma pasta.'
+      : err.message;
+    showToast('error', '❌ Erro de Conexão', msg);
+    console.error('[API ERROR]', err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<span>✅ Cadastrar Produto</span>';
+  }
 });
 
 // ============================================================
@@ -1037,8 +1051,8 @@ document.getElementById('successOverlay').addEventListener('click', function(e) 
 // CLEAR FORM
 // ============================================================
 function clearForm() {
-  ['f-id','f-title','f-category','f-image','f-price','f-originalPrice',
-   'f-discount','f-rating','f-reviews','f-installments','f-url'].forEach(id => {
+  ['f-title','f-category','f-image','f-price','f-originalPrice',
+  'f-discount','f-rating','f-reviews','f-installments','f-url'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.value = ''; el.classList.remove('error'); }
   });
@@ -1053,18 +1067,23 @@ document.getElementById('btnClear').addEventListener('click', () => {
 });
 
 // ============================================================
-// RENDER PRODUCT LIST (SIDE)
+// RENDER PRODUCT LIST (SIDE) — carrega do MySQL
 // ============================================================
-function renderProductList() {
-  const products = loadProducts();
+async function renderProductList() {
   const body = document.getElementById('productListBody');
+  body.innerHTML = `<div class="empty-list"><div class="empty-list-icon">⏳</div><p>Carregando...</p></div>`;
+
+  const products = await loadProducts();
 
   if (!products.length) {
     body.innerHTML = `<div class="empty-list"><div class="empty-list-icon">📭</div><p>Nenhum produto ainda.<br>Cadastre o primeiro!</p></div>`;
+    document.getElementById('productCountBadge').textContent = '0';
     return;
   }
 
-  body.innerHTML = products.slice().reverse().map(p => {
+  document.getElementById('productCountBadge').textContent = products.length;
+
+  body.innerHTML = products.map(p => {
     const cfg = PLATFORMS[p.platform] || PLATFORMS.shopee;
     const tagStyle = `background:${cfg.tagBg};color:${cfg.tagColor}`;
     return `
@@ -1075,32 +1094,43 @@ function renderProductList() {
           <div class="pli-title">${p.title}</div>
           <div style="display:flex;gap:6px;align-items:center;margin-top:3px">
             <span class="pli-tag" style="${tagStyle}">${cfg.emoji} ${cfg.label}</span>
-            <span class="pli-price">R$ ${p.price.toFixed(2).replace('.', ',')}</span>
+            <span class="pli-price">R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}</span>
           </div>
         </div>
         <div class="pli-actions">
-          <button class="pli-btn pli-delete" onclick="deleteProduct('${p.id}')" title="Excluir">🗑️</button>
+          <button class="pli-btn pli-delete" onclick="deleteProduct(${p.id})" title="Excluir">🗑️</button>
         </div>
       </div>
     `;
   }).join('');
 }
 
-function updateCountBadge() {
-  const products = loadProducts();
+async function updateCountBadge() {
+  const products = await loadProducts();
   document.getElementById('productCountBadge').textContent = products.length;
 }
 
 // ============================================================
-// DELETE PRODUCT
+// DELETE PRODUCT — DELETE no MySQL via api.php
 // ============================================================
-function deleteProduct(id) {
+async function deleteProduct(id) {
   if (!confirm('Tem certeza que deseja excluir este produto?')) return;
-  const products = loadProducts().filter(p => String(p.id) !== String(id));
-  saveProducts(products);
-  renderProductList();
-  updateCountBadge();
-  showToast('success', '🗑️ Produto Removido', 'O produto foi excluído da loja');
+
+  try {
+    const res = await fetch(`${API_URL}?action=delete&id=${id}`, { method: 'DELETE' });
+    const data = await res.json();
+
+    if (!data.success) {
+      showToast('error', '❌ Erro ao Excluir', data.error || 'Não foi possível excluir');
+      return;
+    }
+
+    renderProductList();
+    showToast('success', '🗑️ Produto Removido', 'O produto foi excluído do banco de dados');
+  } catch (err) {
+    showToast('error', '❌ Erro ao Excluir', err.message || 'Falha na requisição');
+    console.error('[DELETE ERROR]', err);
+  }
 }
 
 // ============================================================
@@ -1132,7 +1162,7 @@ function showToast(type, title, msg) {
 // INIT
 // ============================================================
 renderProductList();
-updateCountBadge();
 updatePreview();
 </script>
 </body>
+</html>

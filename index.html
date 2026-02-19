@@ -904,44 +904,27 @@
   };
 
   // ============================================================
-  // FETCH DA API
+  // API CONFIG — MySQL via api.php
   // ============================================================
-  // STORAGE KEY (same as registration form)
-  // ============================================================
-  const STORAGE_KEY = 'achadinhos_lucy_products';
-
-  function loadLocalProducts() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    } catch { return []; }
-  }
+  const API_URL = 'api.php';
 
   // ============================================================
-  // FETCH DA API
+  // FETCH PRODUCTS DO MYSQL
   // ============================================================
   async function fetchProducts() {
-    let apiProducts = [];
+    // Tenta carregar do banco de dados MySQL
     try {
-      const params = new URLSearchParams(API_CONFIG.params).toString();
-      const url = params ? `${API_CONFIG.baseUrl}?${params}` : API_CONFIG.baseUrl;
-      const response = await fetch(url, { headers: API_CONFIG.headers });
-      if (!response.ok) throw new Error('API error');
-      const data = await response.json();
-      apiProducts = data.products || data.items || data.data || data;
+      const res = await fetch(`${API_URL}?action=list`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.products) && data.products.length > 0) {
+        return data.products.map(p => ({ ...p, _isNew: false }));
+      }
     } catch (err) {
-      console.warn('⚠️ API indisponível — usando dados demo.', err.message);
-      apiProducts = DEMO_PRODUCTS;
+      console.warn('⚠️ API MySQL indisponível — usando dados demo.', err.message);
     }
 
-    // Load products registered via form (localStorage)
-    const localProducts = loadLocalProducts().map(p => ({ ...p, _isNew: true }));
-
-    // Merge: local products first (most recent), then API/demo
-    // Avoid duplicates by ID
-    const apiIds = new Set(localProducts.map(p => String(p.id)));
-    const merged = [...localProducts, ...apiProducts.filter(p => !apiIds.has(String(p.id)))];
-
-    return merged;
+    // Fallback: usa dados demo se banco estiver vazio ou inacessível
+    return DEMO_PRODUCTS;
   }
 
   // ============================================================
