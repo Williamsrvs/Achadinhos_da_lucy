@@ -633,6 +633,10 @@
           <input type="text" id="f-category" placeholder="ex: Eletrônicos, Beleza, Casa..." list="categories-list" />
           <datalist id="categories-list">
             <option value="Eletrônicos"></option>
+            <option value="Eletrodomésticos"></option>
+            <option value="Alimentos"></option>
+            <option value="Roupas"></option>
+            <option value="Baby"></option>
             <option value="Beleza"></option>
             <option value="Casa e Cozinha"></option>
             <option value="Moda"></option>
@@ -855,7 +859,7 @@ function updatePreview() {
   const existImg = imgWrap.querySelector('img');
   if (image) {
     if (!existImg) {
-      imgWrap.innerHTML = `<img src="${image}" alt="preview" onerror="this.parentElement.innerHTML='<div class=\\"no-img\\"><span>⚠️</span>Imagem inválida</div>'" />`;
+      imgWrap.innerHTML = `<img src="${image}" alt="preview" onerror="this.parentElement.innerHTML='<div class=\\"no-img\\></div>`;
     } else {
       existImg.src = image;
     }

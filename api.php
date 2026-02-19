@@ -115,6 +115,9 @@ try {
             }
         }
 
+        // Helper: retorna float ou 0 (nunca null — colunas são NOT NULL)
+        $toFloat = fn($v) => (isset($v) && $v !== null && $v !== '') ? (float) $v : 0.0;
+
         $stmt = $db->prepare(
             "INSERT INTO " . DB_TABLE . "
              (title, category, image, platform, price, originalPrice, discount, rating, reviewCount, installments, url)
@@ -123,17 +126,17 @@ try {
         );
 
         $stmt->execute([
-            ':title'         => trim($body['title']),
-            ':category'      => trim($body['category']      ?? 'Oferta'),
-            ':image'         => trim($body['image']),
-            ':platform'      => trim($body['platform']),
-            ':price'         => (float) $body['price'],
-            ':originalPrice' => isset($body['originalPrice']) && $body['originalPrice'] !== '' ? (float) $body['originalPrice'] : null,
-            ':discount'      => isset($body['discount'])      && $body['discount']      !== '' ? (float) $body['discount']      : null,
-            ':rating'        => isset($body['rating'])        && $body['rating']        !== '' ? (float) $body['rating']        : null,
-            ':reviewCount'   => (int) ($body['reviews'] ?? 0),
-            ':installments'  => trim($body['installments'] ?? ''),
-            ':url'           => trim($body['url']),
+            ':title'         => trim((string)($body['title'] ?? '')),
+            ':category'      => trim((string)($body['category'] ?? 'Oferta')),
+            ':image'         => trim((string)($body['image'] ?? '')),
+            ':platform'      => trim((string)($body['platform'] ?? '')),
+            ':price'         => $toFloat($body['price'] ?? 0),
+            ':originalPrice' => $toFloat($body['originalPrice'] ?? 0),
+            ':discount'      => $toFloat($body['discount'] ?? 0),
+            ':rating'        => $toFloat($body['rating'] ?? 0),
+            ':reviewCount'   => (int)($body['reviews'] ?? 0),
+            ':installments'  => trim((string)($body['installments'] ?? '')),
+            ':url'           => trim((string)($body['url'] ?? '')),
         ]);
 
         $newId = $db->lastInsertId();
